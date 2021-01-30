@@ -77,7 +77,7 @@ const ImportForm = ({models}) => {
       <FileField>
         <input id="source"
                name="source"
-               accept={".json"}
+               accept={".json, .csv"}
                type="file"
                onChange={onSourceFileChange}
         />
