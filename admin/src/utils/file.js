@@ -1,13 +1,19 @@
-export const readLocalFile = (file, parser) => {
+const csvParser = require("csv-parse/lib/sync");
+// import { parse } from "@babel/core";
+
+export const readLocalFile = (file) => {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
     reader.onload = (event) => {
-      const result = (parser && typeof parser === 'function')
-        ? parser(event.target.result)
-        : event.target.result;
-      resolve(result);
+      const parseData = csvParser(event.target.result, {
+        trim: true,
+        skip_empty_lines: true,
+        columns: true,
+      });
+
+      resolve(parseData);
     };
     reader.onerror = reject;
-    reader.readAsText(file)
+    reader.readAsText(file);
   });
 };
