@@ -3,7 +3,6 @@ import { Button } from "strapi-helper-plugin";
 import { saveAs } from "file-saver";
 import { fetchEntries } from "../../utils/contentApis";
 import { HFlex, ModelItem } from "./ui-components";
-import JsonDataDisplay from "../../components/JsonDataDisplay";
 
 const ExportModel = ({ model }) => {
   const [fetching, setFetching] = useState(false);
@@ -18,16 +17,6 @@ const ExportModel = ({ model }) => {
         setFetching(false);
       });
   };
-
-  // const downloadJson = () => {
-  //   const current = new Date();
-  //   const file = new File(
-  //     [JSON.stringify(content)],
-  //     `${model.apiID}-${current.getTime()}.json`,
-  //     { type: "application/json;charset=utf-8" }
-  //   );
-  //   saveAs(file);
-  // };
 
   const downloadCsv = () => {
     const array = [Object.keys(content[0])].concat(content);
@@ -64,7 +53,6 @@ const ExportModel = ({ model }) => {
           </Button>
         </div>
       </HFlex>
-      {content && <JsonDataDisplay data={content} />}
     </ModelItem>
   );
 };
