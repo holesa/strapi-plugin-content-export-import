@@ -5,7 +5,6 @@ import { find, get, map } from "lodash";
 import { FieldRow, FileField, FormAction } from "./ui-components";
 import { readLocalFile } from "../../utils/file";
 import JsonDataDisplay from "../../components/JsonDataDisplay";
-import { importData } from "../../utils/api";
 
 const ImportForm = ({ models }) => {
   const options = map(models, convertModelToOption);
@@ -31,48 +30,23 @@ const ImportForm = ({ models }) => {
     }
   };
 
-  const upload = () => {
-    if (!sourceFile) {
-      strapi.notification.error("Please choose a source file first.");
-      return;
-    }
-    setLoading(true);
-    readLocalFile(sourceFile)
-      .then(setSource)
-      .catch((error) => {
-        strapi.notification.error(
-          "Something wrong when uploading the file, please check the file and try again."
-        );
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   const submit = () => {
     if (!targetModelUid) {
       strapi.notification.error("Please select a target content type!");
       return;
     }
-    if (!source) {
-      strapi.notification.error("Please choose a source file first.");
-      return;
-    }
-    const model = find(models, (model) => model.uid === targetModelUid);
     setLoading(true);
-    importData({
-      targetModel: model.uid,
-      source,
-      kind: get(model, "schema.kind"),
-    })
-      .then(() => {
+    const model = find(models, (model) => model.uid === targetModelUid);
+    readLocalFile(sourceFile, model)
+      .then((setSource) => {
         strapi.notification.success("Import succeeded!");
       })
       .catch((error) => {
-        console.log(error);
-        strapi.notification.error("Failed: " + error.message);
-      })
+        strapi.notification.error(
+          "Something wrong when importing the file, please check the file and try again."
+        );
+        console.error(error);
+        })
       .finally(() => {
         setLoading(false);
       });
@@ -91,15 +65,6 @@ const ImportForm = ({ models }) => {
           />
         </FileField>
       </FieldRow>
-      {source ? (
-        <JsonDataDisplay data={source} />
-      ) : (
-        <FormAction>
-          <Button disabled={loading} onClick={upload} secondaryHotline>
-            {loading ? "Please Wait..." : "Upload"}
-          </Button>
-        </FormAction>
-      )}
       <FieldRow>
         <label htmlFor="target-content-type">Target Content Type</label>
         <InputSelect
