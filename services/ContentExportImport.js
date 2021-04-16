@@ -12,6 +12,7 @@ const _ = require('lodash');
 module.exports = {
   importData: async (ctx) => {
     const { targetModel, source, kind } = ctx.request.body;
+    console.log(ctx.request.body)
     try {
       if (kind === 'collectionType' && Array.isArray(source)) {
         for (let i = 0; i < source.length; i++) {
